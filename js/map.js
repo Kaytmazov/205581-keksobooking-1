@@ -21,13 +21,6 @@ var AD_TYPE = [
   'bungalo'
 ];
 
-var AD_TYPE_TRANSLATE = {
-  palace: 'Дворец',
-  flat: 'Квартира',
-  house: 'Дом',
-  bungalo: 'Бунгало'
-};
-
 var TIMES = [
   '12:00',
   '13:00',
@@ -53,6 +46,13 @@ var LOCATION_X_MIN = 300;
 var LOCATION_X_MAX = 900;
 var LOCATION_Y_MIN = 150;
 var LOCATION_Y_MAX = 500;
+
+var AdTypeTranslate = {
+  palace: 'Дворец',
+  flat: 'Квартира',
+  house: 'Дом',
+  bungalo: 'Бунгало'
+};
 
 // Получаем случайный элемент из массива
 var getRandomItemFromArray = function (array) {
@@ -197,7 +197,7 @@ var makeCardElement = function (ad) {
   cardElement.querySelector('.popup__title').textContent = ad.offer.title;
   cardElement.querySelector('.popup__text--address').textContent = ad.offer.address;
   cardElement.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
-  cardElement.querySelector('.popup__type').textContent = AD_TYPE_TRANSLATE[ad.offer.type];
+  cardElement.querySelector('.popup__type').textContent = AdTypeTranslate[ad.offer.type];
   cardElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
   cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
 
