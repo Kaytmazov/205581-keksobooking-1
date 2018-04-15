@@ -49,9 +49,8 @@ var LOCATION_X_MIN = 300;
 var LOCATION_X_MAX = 900;
 var LOCATION_Y_MIN = 150;
 var LOCATION_Y_MAX = 500;
-var ENABLE_FORM_FIELDS = true;
-var DISABLE_FORM_FIELDS = false;
-var ENTER_KEYCODE = 13;
+var ENABLE_FORM_FIELDS = false;
+var DISABLE_FORM_FIELDS = true;
 var ESC_KEYCODE = 27;
 
 var AdTypeTranslate = {
@@ -222,6 +221,8 @@ var openCard = function (ad) {
 
 var closeCard = function () {
   map.querySelector('.map__card').remove();
+  var currentPin = map.querySelector('.map__pin--active');
+  currentPin.classList.remove('map__pin--active');
   document.removeEventListener('keydown', onCardEscPress);
 };
 
@@ -240,6 +241,7 @@ var makePinElement = function (ad) {
       closeCard();
     }
     openCard(ad);
+    pinElement.classList.add('map__pin--active');
   });
 
   return pinElement;
@@ -283,7 +285,7 @@ var changeAdFormFieldsState = function (value) {
     adFormFieldsets[i].disabled = value;
   }
 };
-changeAdFormFieldsState(ENABLE_FORM_FIELDS);
+changeAdFormFieldsState(DISABLE_FORM_FIELDS);
 
 // Активация карты при перемещении метки
 var onMainPinDrag = function () {
@@ -291,7 +293,7 @@ var onMainPinDrag = function () {
   mapPinsContainer.appendChild(renderPins(ads));
   setAddressFieldValue('dragged');
   adForm.classList.remove('ad-form--disabled');
-  changeAdFormFieldsState(DISABLE_FORM_FIELDS);
+  changeAdFormFieldsState(ENABLE_FORM_FIELDS);
 };
 
 mapPinMain.addEventListener('mouseup', onMainPinDrag);
