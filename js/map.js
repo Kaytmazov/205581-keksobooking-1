@@ -372,6 +372,7 @@ var switchPageState = function (stateValue) {
     for (var i = 0; i < pins.length; i++) {
       pins[i].remove();
     }
+    map.querySelector('.map__card').remove();
     changeAdFormFieldsState(DISABLE_FORM_FIELDS);
     setAddressFieldValue();
     typeField.removeEventListener('change', onTypeFieldChange);
