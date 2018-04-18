@@ -60,6 +60,13 @@ var AdTypeTranslate = {
   bungalo: 'Бунгало'
 };
 
+var AdTypePrices = {
+  palace: 10000,
+  flat: 1000,
+  house: 5000,
+  bungalo: 0
+};
+
 // Получаем случайный элемент из массива
 var getRandomItemFromArray = function (array) {
   var randomItem = array[Math.floor(Math.random() * array.length)];
@@ -260,6 +267,14 @@ var renderPins = function (adsArray) {
 var adForm = document.querySelector('.ad-form');
 var adFormFieldsets = adForm.querySelectorAll('fieldset');
 var addressField = adForm.querySelector('#address');
+var typeField = adForm.querySelector('#type');
+var priceField = adForm.querySelector('#price');
+var timeInField = adForm.querySelector('#timein');
+var timeOutField = adForm.querySelector('#timeout');
+var roomNumberField = adForm.querySelector('#room_number');
+var capacityField = adForm.querySelector('#capacity');
+var resetButton = adForm.querySelector('.ad-form__reset');
+var submitButton = adForm.querySelector('.ad-form__submit');
 
 // Функция вычисления координат главной метки
 var calculateMainPinCoords = function (pinState) {
@@ -287,13 +302,105 @@ var changeAdFormFieldsState = function (value) {
 };
 changeAdFormFieldsState(DISABLE_FORM_FIELDS);
 
+// Поля Тип жилья и цена
+var setPriceFieldValue = function () {
+  var typeSelectedValue = typeField.options[typeField.selectedIndex].value;
+
+  priceField.placeholder = AdTypePrices[typeSelectedValue];
+  priceField.min = AdTypePrices[typeSelectedValue];
+};
+
+var onTypeFieldChange = function () {
+  setPriceFieldValue();
+};
+
+// Поля Время заезда и выезда
+var onTimeInFieldChange = function () {
+  timeOutField.options.selectedIndex = timeInField.options.selectedIndex;
+};
+
+var onTimeOutFieldChange = function () {
+  timeInField.options.selectedIndex = timeOutField.options.selectedIndex;
+};
+
+// Поля Количество комнат и мест
+var onRoomNumberFieldChange = function () {
+  var roomSelectedValue = parseInt(roomNumberField.options[roomNumberField.selectedIndex].value, 10);
+
+  switch (roomSelectedValue) {
+    case 1:
+      capacityField.options[0].disabled = false;
+      capacityField.options[1].disabled = true;
+      capacityField.options[2].disabled = true;
+      capacityField.options[3].disabled = true;
+      break;
+    case 2:
+      capacityField.options[0].disabled = false;
+      capacityField.options[1].disabled = false;
+      capacityField.options[2].disabled = true;
+      capacityField.options[3].disabled = true;
+      break;
+    case 3:
+      capacityField.options[0].disabled = false;
+      capacityField.options[1].disabled = false;
+      capacityField.options[2].disabled = false;
+      capacityField.options[3].disabled = true;
+      break;
+    default:
+      capacityField.options[0].disabled = true;
+      capacityField.options[1].disabled = true;
+      capacityField.options[2].disabled = true;
+      capacityField.options[3].disabled = false;
+  }
+};
+
+// Функция переключения состояния страницы
+var switchPageState = function (stateValue) {
+  map.classList.toggle('map--faded');
+  adForm.classList.toggle('ad-form--disabled');
+
+  if (stateValue === 'active') {
+    mapPinsContainer.appendChild(renderPins(ads));
+    setAddressFieldValue('dragged');
+    typeField.addEventListener('change', onTypeFieldChange);
+    timeInField.addEventListener('change', onTimeInFieldChange);
+    timeOutField.addEventListener('change', onTimeOutFieldChange);
+    roomNumberField.addEventListener('change', onRoomNumberFieldChange);
+    changeAdFormFieldsState(ENABLE_FORM_FIELDS);
+  } else {
+    var pins = mapPinsContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var i = 0; i < pins.length; i++) {
+      pins[i].remove();
+    }
+    map.querySelector('.map__card').remove();
+    changeAdFormFieldsState(DISABLE_FORM_FIELDS);
+    setAddressFieldValue();
+    typeField.removeEventListener('change', onTypeFieldChange);
+    setPriceFieldValue();
+    timeInField.removeEventListener('change', onTimeInFieldChange);
+    timeOutField.removeEventListener('change', onTimeOutFieldChange);
+    roomNumberField.removeEventListener('change', onRoomNumberFieldChange);
+  }
+};
+
 // Активация карты при перемещении метки
 var onMainPinDrag = function () {
-  map.classList.remove('map--faded');
-  mapPinsContainer.appendChild(renderPins(ads));
-  setAddressFieldValue('dragged');
-  adForm.classList.remove('ad-form--disabled');
-  changeAdFormFieldsState(ENABLE_FORM_FIELDS);
+  switchPageState('active');
 };
 
 mapPinMain.addEventListener('mouseup', onMainPinDrag);
+
+// Сбрасывает форму при клике на кнопку Очистить
+resetButton.addEventListener('click', function () {
+  adForm.reset();
+  switchPageState();
+});
+
+submitButton.addEventListener('click', function () {
+  var capacitySelectedOption = capacityField.options[capacityField.selectedIndex];
+  if (capacitySelectedOption.disabled) {
+    capacityField.setCustomValidity('Выберите допустимое количество гостей');
+  } else {
+    capacityField.setCustomValidity('');
+  }
+});
