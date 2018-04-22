@@ -46,6 +46,7 @@ var PIN_MAIN_HEIGHT = 62;
 var PIN_ARROW_HEIGHT = 22;
 var PIN_MAIN_START_X = 570;
 var PIN_MAIN_START_Y = 375;
+var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
 var LOCATION_X_MIN = 300;
 var LOCATION_X_MAX = 900;
@@ -235,13 +236,13 @@ var closeCard = function () {
   document.removeEventListener('keydown', onCardEscPress);
 };
 
-// Создаем элемент метки
+// Создаем элемента метки
 var makePinElement = function (ad) {
   var pinElement = pinTemplate.cloneNode(true);
   var pinAvatar = pinElement.querySelector('img');
 
-  pinElement.style.left = ad.location.x + 'px';
-  pinElement.style.top = ad.location.y - PIN_HEIGHT / 2 + 'px';
+  pinElement.style.left = ad.location.x - PIN_WIDTH / 2 + 'px';
+  pinElement.style.top = ad.location.y - PIN_HEIGHT + 'px';
   pinAvatar.src = ad.author.avatar;
   pinAvatar.alt = ad.offer.title;
 
