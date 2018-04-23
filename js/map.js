@@ -1,10 +1,6 @@
 'use strict';
 
 var ADS_COUNT = 8;
-var PIN_MAIN_WIDTH = 62;
-var PIN_MAIN_HEIGHT = 62;
-var PIN_ARROW_HEIGHT = 22;
-var PIN_HEIGHT = 70;
 
 var AD_TITLES = [
   'Большая уютная квартира',
@@ -45,6 +41,13 @@ var AD_PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 
+var PIN_MAIN_WIDTH = 62;
+var PIN_MAIN_HEIGHT = 62;
+var PIN_ARROW_HEIGHT = 22;
+var PIN_MAIN_START_X = 570;
+var PIN_MAIN_START_Y = 375;
+var PIN_WIDTH = 50;
+var PIN_HEIGHT = 70;
 var LOCATION_X_MIN = 300;
 var LOCATION_X_MAX = 900;
 var LOCATION_Y_MIN = 150;
@@ -233,13 +236,13 @@ var closeCard = function () {
   document.removeEventListener('keydown', onCardEscPress);
 };
 
-// Создаем элемент метки
+// Создаем элемента метки
 var makePinElement = function (ad) {
   var pinElement = pinTemplate.cloneNode(true);
   var pinAvatar = pinElement.querySelector('img');
 
-  pinElement.style.left = ad.location.x + 'px';
-  pinElement.style.top = ad.location.y - PIN_HEIGHT / 2 + 'px';
+  pinElement.style.left = ad.location.x - PIN_WIDTH / 2 + 'px';
+  pinElement.style.top = ad.location.y - PIN_HEIGHT + 'px';
   pinAvatar.src = ad.author.avatar;
   pinAvatar.alt = ad.offer.title;
 
@@ -355,45 +358,100 @@ var onRoomNumberFieldChange = function () {
 };
 
 // Функция переключения состояния страницы
-var switchPageState = function (stateValue) {
-  map.classList.toggle('map--faded');
-  adForm.classList.toggle('ad-form--disabled');
+var enablePageState = function () {
+  mapPinsContainer.appendChild(renderPins(ads));
+  setAddressFieldValue('dragged');
 
-  if (stateValue === 'active') {
-    mapPinsContainer.appendChild(renderPins(ads));
-    setAddressFieldValue('dragged');
-    typeField.addEventListener('change', onTypeFieldChange);
-    timeInField.addEventListener('change', onTimeInFieldChange);
-    timeOutField.addEventListener('change', onTimeOutFieldChange);
-    roomNumberField.addEventListener('change', onRoomNumberFieldChange);
-    changeAdFormFieldsState(ENABLE_FORM_FIELDS);
-  } else {
-    var pins = mapPinsContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
-    for (var i = 0; i < pins.length; i++) {
-      pins[i].remove();
-    }
-    map.querySelector('.map__card').remove();
-    changeAdFormFieldsState(DISABLE_FORM_FIELDS);
-    setAddressFieldValue();
-    typeField.removeEventListener('change', onTypeFieldChange);
-    setPriceFieldValue();
-    timeInField.removeEventListener('change', onTimeInFieldChange);
-    timeOutField.removeEventListener('change', onTimeOutFieldChange);
-    roomNumberField.removeEventListener('change', onRoomNumberFieldChange);
+  map.classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+
+  typeField.addEventListener('change', onTypeFieldChange);
+  timeInField.addEventListener('change', onTimeInFieldChange);
+  timeOutField.addEventListener('change', onTimeOutFieldChange);
+  roomNumberField.addEventListener('change', onRoomNumberFieldChange);
+  changeAdFormFieldsState(ENABLE_FORM_FIELDS);
+};
+
+var disablePageState = function () {
+  map.classList.add('map--faded');
+  adForm.classList.add('ad-form--disabled');
+
+  mapPinMain.style.left = PIN_MAIN_START_X + 'px';
+  mapPinMain.style.top = PIN_MAIN_START_Y + 'px';
+  var pins = mapPinsContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
+  for (var i = 0; i < pins.length; i++) {
+    pins[i].remove();
   }
+  map.querySelector('.map__card').remove();
+  changeAdFormFieldsState(DISABLE_FORM_FIELDS);
+  setAddressFieldValue();
+  typeField.removeEventListener('change', onTypeFieldChange);
+  setPriceFieldValue();
+  timeInField.removeEventListener('change', onTimeInFieldChange);
+  timeOutField.removeEventListener('change', onTimeOutFieldChange);
+  roomNumberField.removeEventListener('change', onRoomNumberFieldChange);
 };
 
 // Активация карты при перемещении метки
-var onMainPinDrag = function () {
-  switchPageState('active');
+var onMainPinDrag = function (evt) {
+  evt.preventDefault();
+
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    map.classList.remove('map--faded');
+    adForm.classList.remove('ad-form--disabled');
+
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    var currentPinX = mapPinMain.offsetLeft - shift.x;
+    var currentPinY = mapPinMain.offsetTop - shift.y;
+
+    var isAvialibleX = currentPinX + (PIN_MAIN_WIDTH / 2) > LOCATION_X_MIN && currentPinX + (PIN_MAIN_WIDTH / 2) < LOCATION_X_MAX;
+    var isAvialibleY = currentPinY + PIN_MAIN_HEIGHT + PIN_ARROW_HEIGHT > LOCATION_Y_MIN && currentPinY + PIN_MAIN_HEIGHT + PIN_ARROW_HEIGHT < LOCATION_Y_MAX;
+
+    if (isAvialibleX) {
+      mapPinMain.style.left = currentPinX + 'px';
+    }
+
+    if (isAvialibleY) {
+      mapPinMain.style.top = currentPinY + 'px';
+    }
+    setAddressFieldValue('dragged');
+  };
+
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    enablePageState();
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
 };
 
 mapPinMain.addEventListener('mouseup', onMainPinDrag);
+mapPinMain.addEventListener('mousedown', onMainPinDrag);
 
 // Сбрасывает форму при клике на кнопку Очистить
 resetButton.addEventListener('click', function () {
   adForm.reset();
-  switchPageState();
+  disablePageState();
 });
 
 submitButton.addEventListener('click', function () {
