@@ -13,6 +13,7 @@
   var ESC_KEYCODE = 27;
   var ENABLE_FORM_FIELDS = false;
   var DISABLE_FORM_FIELDS = true;
+  var LOAD_URL = 'https://js.dump.academy/keksobooking/data';
 
   var map = document.querySelector('.map');
   var mapPinsContainer = map.querySelector('.map__pins');
@@ -22,10 +23,16 @@
   var timeInField = adForm.querySelector('#timein');
   var timeOutField = adForm.querySelector('#timeout');
   var roomNumberField = adForm.querySelector('#room_number');
+  var pageState = 'disabled';
+
+  // При успешном запросе
+  var onLoad = function (ads) {
+    mapPinsContainer.appendChild(renderPins(ads));
+  };
 
   // Функция переключения состояния страницы
   var enablePageState = function () {
-    mapPinsContainer.appendChild(renderPins(window.data.ads));
+    window.backend.load(onLoad, window.util.onRequestError, LOAD_URL);
     window.form.setAddressFieldValue('dragged');
 
     map.classList.remove('map--faded');
@@ -36,6 +43,7 @@
     timeOutField.addEventListener('change', window.form.onTimeOutFieldChange);
     roomNumberField.addEventListener('change', window.form.onRoomNumberFieldChange);
     window.form.changeAdFormFieldsState(ENABLE_FORM_FIELDS);
+    pageState = 'enagled';
   };
 
   // Закрытие карточки при нажатии кнопки ESC
@@ -106,7 +114,9 @@
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
 
-      enablePageState();
+      if (pageState === 'disabled') {
+        enablePageState();
+      }
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
     };
@@ -115,14 +125,13 @@
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  mapPinMain.addEventListener('mouseup', onMainPinDrag);
   mapPinMain.addEventListener('mousedown', onMainPinDrag);
-
 
   window.map = {
     disablePageState: function () {
       map.classList.add('map--faded');
       adForm.classList.add('ad-form--disabled');
+      adForm.reset();
 
       mapPinMain.style.left = PIN_MAIN_START_X + 'px';
       mapPinMain.style.top = PIN_MAIN_START_Y + 'px';
@@ -130,7 +139,10 @@
       for (var i = 0; i < pins.length; i++) {
         pins[i].remove();
       }
-      map.querySelector('.map__card').remove();
+      var openedCard = map.querySelector('.map__card');
+      if (openedCard) {
+        openedCard.remove();
+      }
       window.form.changeAdFormFieldsState(DISABLE_FORM_FIELDS);
       window.form.setAddressFieldValue();
       typeField.removeEventListener('change', window.form.onTypeFieldChange);
@@ -138,6 +150,7 @@
       timeInField.removeEventListener('change', window.form.onTimeInFieldChange);
       timeOutField.removeEventListener('change', window.form.onTimeOutFieldChange);
       roomNumberField.removeEventListener('change', window.form.onRoomNumberFieldChange);
+      pageState = 'disabled';
     },
     openCard: function (ad) {
       map.insertBefore(renderCard(ad), map.querySelector('.map__filters-container'));
