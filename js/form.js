@@ -22,6 +22,35 @@
     bungalo: 0
   };
 
+  var capacityValuesMap = {
+    '1': ['1'],
+    '2': ['1', '2'],
+    '3': ['1', '2', '3'],
+    '100': ['0'],
+  };
+
+  var updateCapacityField = function () {
+    var roomSelectedValue = roomNumberField.options[roomNumberField.selectedIndex].value;
+    var capacityAllowedValues = capacityValuesMap[roomSelectedValue];
+
+    var capacityAllowedOptions = [];
+
+    for (var i = 0; i < capacityAllowedValues.length; i++) {
+      var index = capacityAllowedValues[i];
+      for (var j = 0; j < capacityField.options.length; j++) {
+        if (capacityField.options[j].value === index) {
+          capacityAllowedOptions.push(capacityField.options[j]);
+        } else {
+          capacityField.options[j].disabled = true;
+        }
+      }
+    }
+
+    for (i = 0; i < capacityAllowedOptions.length; i++) {
+      capacityAllowedOptions[i].disabled = false;
+    }
+  };
+
   window.form = {
     // Функция установки значения в поле адреса
     setAddressFieldValue: function (pinState) {
@@ -44,34 +73,37 @@
       timeInField.options.selectedIndex = timeOutField.options.selectedIndex;
     },
     // Поля Количество комнат и мест
-    onRoomNumberFieldChange: function () {
-      var roomSelectedValue = parseInt(roomNumberField.options[roomNumberField.selectedIndex].value, 10);
+    // onRoomNumberFieldChange: function () {
+    //   var roomSelectedValue = parseInt(roomNumberField.options[roomNumberField.selectedIndex].value, 10);
 
-      switch (roomSelectedValue) {
-        case 1:
-          capacityField.options[0].disabled = false;
-          capacityField.options[1].disabled = true;
-          capacityField.options[2].disabled = true;
-          capacityField.options[3].disabled = true;
-          break;
-        case 2:
-          capacityField.options[0].disabled = false;
-          capacityField.options[1].disabled = false;
-          capacityField.options[2].disabled = true;
-          capacityField.options[3].disabled = true;
-          break;
-        case 3:
-          capacityField.options[0].disabled = false;
-          capacityField.options[1].disabled = false;
-          capacityField.options[2].disabled = false;
-          capacityField.options[3].disabled = true;
-          break;
-        default:
-          capacityField.options[0].disabled = true;
-          capacityField.options[1].disabled = true;
-          capacityField.options[2].disabled = true;
-          capacityField.options[3].disabled = false;
-      }
+    //   switch (roomSelectedValue) {
+    //     case 1:
+    //       capacityField.options[0].disabled = false;
+    //       capacityField.options[1].disabled = true;
+    //       capacityField.options[2].disabled = true;
+    //       capacityField.options[3].disabled = true;
+    //       break;
+    //     case 2:
+    //       capacityField.options[0].disabled = false;
+    //       capacityField.options[1].disabled = false;
+    //       capacityField.options[2].disabled = true;
+    //       capacityField.options[3].disabled = true;
+    //       break;
+    //     case 3:
+    //       capacityField.options[0].disabled = false;
+    //       capacityField.options[1].disabled = false;
+    //       capacityField.options[2].disabled = false;
+    //       capacityField.options[3].disabled = true;
+    //       break;
+    //     default:
+    //       capacityField.options[0].disabled = true;
+    //       capacityField.options[1].disabled = true;
+    //       capacityField.options[2].disabled = true;
+    //       capacityField.options[3].disabled = false;
+    //   }
+    // },
+    onRoomNumberFieldChange: function () {
+      updateCapacityField();
     },
     // Поля Тип жилья и цена
     setPriceFieldValue: function () {
@@ -87,11 +119,8 @@
 
   // Сбрасывает форму при клике на кнопку Очистить
   resetButton.addEventListener('click', function () {
-    capacityField.options[0].disabled = false;
-    capacityField.options[1].disabled = true;
-    capacityField.options[2].disabled = true;
-    capacityField.options[3].disabled = true;
     window.map.disablePageState();
+    updateCapacityField();
   });
 
   submitButton.addEventListener('click', function () {
@@ -114,7 +143,7 @@
   };
 
   adForm.addEventListener('submit', function (evt) {
-    window.backend.save(new FormData(adForm), onSuccess, window.util.onRequestError, SAVE_URL);
+    window.backend.save(new FormData(adForm), onSuccess, window.error.onRequestError, SAVE_URL);
     evt.preventDefault();
   });
 })();

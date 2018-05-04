@@ -2,7 +2,7 @@
 
 (function () {
   var TIMEOUT = 10000;
-  var StatusCodes = {
+  var StatusCode = {
     SUCCESS: 200,
     BAD_REQUEST: 400,
     ACCESS_DENIED: 403,
@@ -18,22 +18,22 @@
 
     xhr.addEventListener('load', function () {
       switch (xhr.status) {
-        case StatusCodes.SUCCESS:
+        case StatusCode.SUCCESS:
           onLoad(xhr.response);
           break;
-        case StatusCodes.BAD_REQUEST:
+        case StatusCode.BAD_REQUEST:
           onError('Статус ответа: ' + xhr.status, 'В запросе ошибка.');
           break;
-        case StatusCodes.ACCESS_DENIED:
+        case StatusCode.ACCESS_DENIED:
           onError('Статус ответа: ' + xhr.status, 'Доступ запрещён. У вас недостаточно прав.');
           break;
-        case StatusCodes.NOT_FOUND:
+        case StatusCode.NOT_FOUND:
           onError('Статус ответа: ' + xhr.status, 'Данные по запросу не найдены.');
           break;
-        case StatusCodes.SERVER_ERROR:
+        case StatusCode.SERVER_ERROR:
           onError('Статус ответа: ' + xhr.status, 'Внутренняя ошибка сервера');
           break;
-        case StatusCodes.APPLICATION_ERROR:
+        case StatusCode.APPLICATION_ERROR:
           onError('Статус ответа: ' + xhr.status, 'Сервис временно недоступен');
           break;
         default:

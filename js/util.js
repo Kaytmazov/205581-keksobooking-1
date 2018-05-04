@@ -37,26 +37,6 @@
       }
 
       return sheffledArray;
-    },
-    onRequestError: function (errorTitle, errorText) {
-      var template = document.querySelector('template');
-      var errorTemplate = template.content.querySelector('.error').cloneNode(true);
-      errorTemplate.querySelector('.error__title').textContent = errorTitle;
-      errorTemplate.querySelector('.error__text').textContent = errorText;
-
-      document.body.insertAdjacentElement('afterbegin', errorTemplate);
-
-      var errorAlert = document.querySelector('.error');
-      var removeErrorAlert = function () {
-        errorAlert.remove();
-      };
-      var timerId = setTimeout(removeErrorAlert, 3000);
-      errorAlert.addEventListener('mouseover', function () {
-        clearTimeout(timerId);
-      });
-      errorAlert.addEventListener('mouseout', function () {
-        setTimeout(removeErrorAlert, 1000);
-      });
     }
   };
 })();

@@ -1,6 +1,12 @@
 'use strict';
 
 (function () {
+  // var MainPin = {
+  //   WIDTH: 62,
+  //   HEIGHT: 62,
+  //   START_X: 570,
+  //   START_Y: 375
+  // };
   var PIN_MAIN_WIDTH = 62;
   var PIN_MAIN_HEIGHT = 62;
   var PIN_ARROW_HEIGHT = 22;
@@ -10,6 +16,7 @@
   var template = document.querySelector('template');
   var pinTemplate = template.content.querySelector('.map__pin');
   var map = document.querySelector('.map');
+  var mapPinsContainer = map.querySelector('.map__pins');
   var mapPinMain = document.querySelector('.map__pin--main');
 
   window.pin = {
@@ -44,6 +51,26 @@
       }
 
       return cordX + ', ' + cordY;
+    },
+    // Функция отрисовки меток объявлений
+    renderPins: function (adsArray) {
+      var fragment = document.createDocumentFragment();
+      // for (var i = 0; i < adsArray.length; i++) {
+      //   fragment.appendChild(window.pin.makePinElement(adsArray[i]));
+      // }
+
+      adsArray.forEach(function (it) {
+        fragment.appendChild(window.pin.makePinElement(it));
+      });
+
+      return fragment;
+    },
+    // Функция удаления отрисованных меток
+    removePins: function () {
+      var pins = mapPinsContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
+      pins.forEach(function (pin) {
+        pin.remove();
+      });
     }
   };
 })();
