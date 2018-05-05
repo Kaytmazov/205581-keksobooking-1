@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var PINS_AMOUNT = -5;
+
   var map = document.querySelector('.map');
   var mapPinsContainer = map.querySelector('.map__pins');
   var mapFilters = document.querySelector('.map__filters');
@@ -8,8 +10,6 @@
   var housingPrice = mapFilters.querySelector('#housing-price');
   var housingRooms = mapFilters.querySelector('#housing-rooms');
   var housingGuests = mapFilters.querySelector('#housing-guests');
-
-  var PINS_AMOUNT = -5;
 
   var Price = {
     LOW: 10000,
@@ -39,9 +39,9 @@
   var getPrice = function (ad) {
     switch (housingPrice.value) {
       case 'low':
-        return Price.LOW >= ad.offer.price;
+        return Price.LOW > ad.offer.price;
       case 'middle':
-        return Price.LOW <= ad.offer.price && Price.HIGH >= ad.offer.price;
+        return Price.LOW <= ad.offer.price && Price.HIGH > ad.offer.price;
       case 'high':
         return Price.HIGH <= ad.offer.price;
       default:

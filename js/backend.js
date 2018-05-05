@@ -2,6 +2,7 @@
 
 (function () {
   var TIMEOUT = 10000;
+
   var StatusCode = {
     SUCCESS: 200,
     BAD_REQUEST: 400,

@@ -8,35 +8,22 @@
         parent.removeChild(parent.firstChild);
       }
     },
+    createCollectionFromArray: function (array, renderFunction) {
+      var fragment = document.createDocumentFragment();
 
-    // Получаем случайный элемент из массива
-    getRandomItemFromArray: function (array) {
-      var randomItem = array[Math.floor(Math.random() * array.length)];
-      return randomItem;
+      array.forEach(function (it) {
+        fragment.appendChild(renderFunction(it));
+      });
+
+      return fragment;
     },
+    // Функция включения / отключения полей формы
+    changeFormFieldsState: function (value, form) {
+      var fields = form.children;
 
-    // Получаем случайное число в заданом промежутке
-    getRandomInt: function (min, max) {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    },
-
-    // Получаем массив случайной длины
-    getRandomLengthArray: function (array) {
-      return array.slice(0, this.getRandomInt(1, array.length));
-    },
-
-    // Перемешать массив
-    shuffleArray: function (array) {
-      var sheffledArray = [];
-      var clone = array.slice();
-
-      while (clone.length) {
-        var index = Math.floor(Math.random() * clone.length);
-        var element = clone.splice(index, 1)[0];
-        sheffledArray.push(element);
-      }
-
-      return sheffledArray;
+      Array.from(fields).forEach(function (it) {
+        it.disabled = value;
+      });
     }
   };
 })();

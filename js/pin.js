@@ -1,12 +1,6 @@
 'use strict';
 
 (function () {
-  // var MainPin = {
-  //   WIDTH: 62,
-  //   HEIGHT: 62,
-  //   START_X: 570,
-  //   START_Y: 375
-  // };
   var PIN_MAIN_WIDTH = 62;
   var PIN_MAIN_HEIGHT = 62;
   var PIN_ARROW_HEIGHT = 22;
@@ -19,28 +13,28 @@
   var mapPinsContainer = map.querySelector('.map__pins');
   var mapPinMain = document.querySelector('.map__pin--main');
 
+  // Создание элемента метки
+  var makePinElement = function (ad) {
+    var pinElement = pinTemplate.cloneNode(true);
+    var pinAvatar = pinElement.querySelector('img');
+
+    pinElement.style.left = ad.location.x - PIN_WIDTH / 2 + 'px';
+    pinElement.style.top = ad.location.y - PIN_HEIGHT + 'px';
+    pinAvatar.src = ad.author.avatar;
+    pinAvatar.alt = ad.offer.title;
+
+    pinElement.addEventListener('click', function () {
+      if (map.querySelector('.map__card')) {
+        window.map.closeCard();
+      }
+      window.map.openCard(ad);
+      pinElement.classList.add('map__pin--active');
+    });
+
+    return pinElement;
+  };
+
   window.pin = {
-    // Создаем элемента метки
-    makePinElement: function (ad) {
-      var pinElement = pinTemplate.cloneNode(true);
-      var pinAvatar = pinElement.querySelector('img');
-
-      pinElement.style.left = ad.location.x - PIN_WIDTH / 2 + 'px';
-      pinElement.style.top = ad.location.y - PIN_HEIGHT + 'px';
-      pinAvatar.src = ad.author.avatar;
-      pinAvatar.alt = ad.offer.title;
-
-      pinElement.addEventListener('click', function () {
-        if (map.querySelector('.map__card')) {
-          window.map.closeCard();
-        }
-        window.map.openCard(ad);
-        pinElement.classList.add('map__pin--active');
-      });
-
-      return pinElement;
-    },
-
     // Функция вычисления координат главной метки
     calculateMainPinCoords: function (pinState) {
       var cordX = mapPinMain.offsetLeft + (PIN_MAIN_WIDTH / 2);
@@ -53,14 +47,11 @@
       return cordX + ', ' + cordY;
     },
     // Функция отрисовки меток объявлений
-    renderPins: function (adsArray) {
+    renderPins: function (ads) {
       var fragment = document.createDocumentFragment();
-      // for (var i = 0; i < adsArray.length; i++) {
-      //   fragment.appendChild(window.pin.makePinElement(adsArray[i]));
-      // }
 
-      adsArray.forEach(function (it) {
-        fragment.appendChild(window.pin.makePinElement(it));
+      ads.forEach(function (it) {
+        fragment.appendChild(makePinElement(it));
       });
 
       return fragment;

@@ -47,7 +47,8 @@
     timeInField.addEventListener('change', window.form.onTimeInFieldChange);
     timeOutField.addEventListener('change', window.form.onTimeOutFieldChange);
     roomNumberField.addEventListener('change', window.form.onRoomNumberFieldChange);
-    window.form.changeAdFormFieldsState(ENABLE_FORM_FIELDS);
+    window.util.changeFormFieldsState(ENABLE_FORM_FIELDS, adForm);
+    window.util.changeFormFieldsState(ENABLE_FORM_FIELDS, mapFilters);
     pageState = 'enagled';
   };
 
@@ -62,6 +63,7 @@
   var renderCard = function (ad) {
     var fragment = document.createDocumentFragment();
     fragment.appendChild(window.card.makeCardElement(ad));
+
     return fragment;
   };
 
@@ -124,6 +126,8 @@
 
   window.map = {
     disablePageState: function () {
+      var openedCard = map.querySelector('.map__card');
+
       map.classList.add('map--faded');
       adForm.classList.add('ad-form--disabled');
       adForm.reset();
@@ -131,11 +135,13 @@
       mapPinMain.style.left = PIN_MAIN_START_X + 'px';
       mapPinMain.style.top = PIN_MAIN_START_Y + 'px';
       window.pin.removePins();
-      var openedCard = map.querySelector('.map__card');
+
       if (openedCard) {
         openedCard.remove();
       }
-      window.form.changeAdFormFieldsState(DISABLE_FORM_FIELDS);
+
+      window.util.changeFormFieldsState(DISABLE_FORM_FIELDS, adForm);
+      window.util.changeFormFieldsState(DISABLE_FORM_FIELDS, mapFilters);
       window.form.setAddressFieldValue();
       mapFilters.removeEventListener('change', window.filter.onFilterChange);
       typeField.removeEventListener('change', window.form.onTypeFieldChange);

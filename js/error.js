@@ -2,6 +2,7 @@
 
 (function () {
   var ALERT_CLOSE_TIMER = 5000;
+
   var template = document.querySelector('template');
   var errorTemplate = template.content.querySelector('.error').cloneNode(true);
 
