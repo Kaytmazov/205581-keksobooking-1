@@ -65,15 +65,10 @@
 
   var getFeatures = function (ad) {
     var checkedFeatures = mapFilters.querySelectorAll('input[type=checkbox]:checked');
-    var hasFeatures = true;
 
-    checkedFeatures.forEach(function (it) {
-      if (ad.offer.features.indexOf(it.value) === -1) {
-        hasFeatures = false;
-      }
+    return Array.from(checkedFeatures).every(function (it) {
+      return ad.offer.features.indexOf(it.value) !== -1;
     });
-
-    return hasFeatures;
   };
 
   window.filter = {
