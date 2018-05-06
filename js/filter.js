@@ -67,10 +67,9 @@
     var checkedFeatures = mapFilters.querySelectorAll('input[type=checkbox]:checked');
     var hasFeatures = true;
 
-    checkedFeatures.forEach(function (it) {
-      if (ad.offer.features.indexOf(it.value) === -1) {
-        hasFeatures = false;
-      }
+    Array.from(checkedFeatures).every(function (it) {
+      hasFeatures = ad.offer.features.indexOf(it.value) !== -1;
+      return hasFeatures;
     });
 
     return hasFeatures;
