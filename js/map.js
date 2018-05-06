@@ -25,6 +25,8 @@
   var timeInField = adForm.querySelector('#timein');
   var timeOutField = adForm.querySelector('#timeout');
   var roomNumberField = adForm.querySelector('#room_number');
+  var resetButton = adForm.querySelector('.ad-form__reset');
+  var submitButton = adForm.querySelector('.ad-form__submit');
   var pageState = 'disabled';
 
   // При успешном запросе
@@ -47,6 +49,9 @@
     timeInField.addEventListener('change', window.form.onTimeInFieldChange);
     timeOutField.addEventListener('change', window.form.onTimeOutFieldChange);
     roomNumberField.addEventListener('change', window.form.onRoomNumberFieldChange);
+    resetButton.addEventListener('click', window.form.onResetButtonClick);
+    submitButton.addEventListener('click', window.form.onSubmitButtonClick);
+    adForm.addEventListener('submit', window.form.onAdFormSubmit);
     window.util.changeFormFieldsState(ENABLE_FORM_FIELDS, adForm);
     window.util.changeFormFieldsState(ENABLE_FORM_FIELDS, mapFilters);
     pageState = 'enagled';
@@ -149,6 +154,9 @@
       timeInField.removeEventListener('change', window.form.onTimeInFieldChange);
       timeOutField.removeEventListener('change', window.form.onTimeOutFieldChange);
       roomNumberField.removeEventListener('change', window.form.onRoomNumberFieldChange);
+      resetButton.removeEventListener('click', window.form.onResetButtonClick);
+      submitButton.removeEventListener('click', window.form.onSubmitButtonClick);
+      adForm.removeEventListener('submit', window.form.onAdFormSubmit);
       pageState = 'disabled';
     },
     openCard: function (ad) {

@@ -12,8 +12,6 @@
   var timeOutField = adForm.querySelector('#timeout');
   var roomNumberField = adForm.querySelector('#room_number');
   var capacityField = adForm.querySelector('#capacity');
-  var resetButton = adForm.querySelector('.ad-form__reset');
-  var submitButton = adForm.querySelector('.ad-form__submit');
 
   var typePricesMap = {
     palace: 10000,
@@ -30,6 +28,16 @@
     '100': ['0'],
   };
 
+  var onSuccess = function () {
+    window.map.disablePageState();
+    var successMessage = document.querySelector('.success');
+    successMessage.classList.remove('hidden');
+    var hideSuccessMsg = function () {
+      successMessage.classList.add('hidden');
+    };
+    setTimeout(hideSuccessMsg, 2000);
+  };
+
   var updateCapacityField = function () {
     var roomSelectedValue = parseInt(roomNumberField.options[roomNumberField.selectedIndex].value, 10);
     var capacityAllowedValues = capacityValuesMap[roomSelectedValue];
@@ -42,36 +50,6 @@
       }
     });
   };
-
-  // Сбрасывает форму при клике на кнопку Очистить
-  resetButton.addEventListener('click', function () {
-    window.map.disablePageState();
-    updateCapacityField();
-  });
-
-  submitButton.addEventListener('click', function () {
-    var capacitySelectedOption = capacityField.options[capacityField.selectedIndex];
-    if (capacitySelectedOption.disabled) {
-      capacityField.setCustomValidity('Выберите допустимое количество гостей');
-    } else {
-      capacityField.setCustomValidity('');
-    }
-  });
-
-  var onSuccess = function () {
-    window.map.disablePageState();
-    var successMessage = document.querySelector('.success');
-    successMessage.classList.remove('hidden');
-    var hideSuccessMsg = function () {
-      successMessage.classList.add('hidden');
-    };
-    setTimeout(hideSuccessMsg, 2000);
-  };
-
-  adForm.addEventListener('submit', function (evt) {
-    window.backend.save(new FormData(adForm), onSuccess, window.error.onRequestError, SAVE_URL);
-    evt.preventDefault();
-  });
 
   window.form = {
     // Функция установки значения в поле адреса
@@ -98,6 +76,23 @@
 
       priceField.placeholder = typePricesMap[typeSelectedValue];
       priceField.min = typePricesMap[typeSelectedValue];
+    },
+    // Сбрасывает форму при клике на кнопку Очистить
+    onResetButtonClick: function () {
+      window.map.disablePageState();
+      updateCapacityField();
+    },
+    onSubmitButtonClick: function () {
+      var capacitySelectedOption = capacityField.options[capacityField.selectedIndex];
+      if (capacitySelectedOption.disabled) {
+        capacityField.setCustomValidity('Выберите допустимое количество гостей');
+      } else {
+        capacityField.setCustomValidity('');
+      }
+    },
+    onAdFormSubmit: function (evt) {
+      window.backend.save(new FormData(adForm), onSuccess, window.error.onRequestError, SAVE_URL);
+      evt.preventDefault();
     }
   };
 
