@@ -10,30 +10,31 @@
   var template = document.querySelector('template');
   var pinTemplate = template.content.querySelector('.map__pin');
   var map = document.querySelector('.map');
+  var mapPinsContainer = map.querySelector('.map__pins');
   var mapPinMain = document.querySelector('.map__pin--main');
 
+  // Создание элемента метки
+  var makePinElement = function (ad) {
+    var pinElement = pinTemplate.cloneNode(true);
+    var pinAvatar = pinElement.querySelector('img');
+
+    pinElement.style.left = ad.location.x - PIN_WIDTH / 2 + 'px';
+    pinElement.style.top = ad.location.y - PIN_HEIGHT + 'px';
+    pinAvatar.src = ad.author.avatar;
+    pinAvatar.alt = ad.offer.title;
+
+    pinElement.addEventListener('click', function () {
+      if (map.querySelector('.map__card')) {
+        window.map.closeCard();
+      }
+      window.map.openCard(ad);
+      pinElement.classList.add('map__pin--active');
+    });
+
+    return pinElement;
+  };
+
   window.pin = {
-    // Создаем элемента метки
-    makePinElement: function (ad) {
-      var pinElement = pinTemplate.cloneNode(true);
-      var pinAvatar = pinElement.querySelector('img');
-
-      pinElement.style.left = ad.location.x - PIN_WIDTH / 2 + 'px';
-      pinElement.style.top = ad.location.y - PIN_HEIGHT + 'px';
-      pinAvatar.src = ad.author.avatar;
-      pinAvatar.alt = ad.offer.title;
-
-      pinElement.addEventListener('click', function () {
-        if (map.querySelector('.map__card')) {
-          window.map.closeCard();
-        }
-        window.map.openCard(ad);
-        pinElement.classList.add('map__pin--active');
-      });
-
-      return pinElement;
-    },
-
     // Функция вычисления координат главной метки
     calculateMainPinCoords: function (pinState) {
       var cordX = mapPinMain.offsetLeft + (PIN_MAIN_WIDTH / 2);
@@ -44,6 +45,23 @@
       }
 
       return cordX + ', ' + cordY;
+    },
+    // Функция отрисовки меток объявлений
+    renderPins: function (ads) {
+      var fragment = document.createDocumentFragment();
+
+      ads.forEach(function (it) {
+        fragment.appendChild(makePinElement(it));
+      });
+
+      return fragment;
+    },
+    // Функция удаления отрисованных меток
+    removePins: function () {
+      var pins = mapPinsContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
+      pins.forEach(function (pin) {
+        pin.remove();
+      });
     }
   };
 })();

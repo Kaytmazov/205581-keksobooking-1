@@ -13,11 +13,13 @@
   var ESC_KEYCODE = 27;
   var ENABLE_FORM_FIELDS = false;
   var DISABLE_FORM_FIELDS = true;
+  var PINS_AMOUNT = -5;
   var LOAD_URL = 'https://js.dump.academy/keksobooking/data';
 
   var map = document.querySelector('.map');
   var mapPinsContainer = map.querySelector('.map__pins');
   var mapPinMain = document.querySelector('.map__pin--main');
+  var mapFilters = document.querySelector('.map__filters');
   var adForm = document.querySelector('.ad-form');
   var typeField = adForm.querySelector('#type');
   var timeInField = adForm.querySelector('#timein');
@@ -26,23 +28,27 @@
   var pageState = 'disabled';
 
   // При успешном запросе
-  var onLoad = function (ads) {
-    mapPinsContainer.appendChild(renderPins(ads));
+  var onLoad = function (data) {
+    window.ads = data;
+    var slicedAds = window.ads.slice(PINS_AMOUNT);
+    mapPinsContainer.append(window.pin.renderPins(slicedAds));
   };
 
   // Функция переключения состояния страницы
   var enablePageState = function () {
-    window.backend.load(onLoad, window.util.onRequestError, LOAD_URL);
+    window.backend.load(onLoad, window.error.onRequestError, LOAD_URL);
     window.form.setAddressFieldValue('dragged');
 
     map.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
 
+    mapFilters.addEventListener('change', window.filter.onFilterChange);
     typeField.addEventListener('change', window.form.onTypeFieldChange);
     timeInField.addEventListener('change', window.form.onTimeInFieldChange);
     timeOutField.addEventListener('change', window.form.onTimeOutFieldChange);
     roomNumberField.addEventListener('change', window.form.onRoomNumberFieldChange);
-    window.form.changeAdFormFieldsState(ENABLE_FORM_FIELDS);
+    window.util.changeFormFieldsState(ENABLE_FORM_FIELDS, adForm);
+    window.util.changeFormFieldsState(ENABLE_FORM_FIELDS, mapFilters);
     pageState = 'enagled';
   };
 
@@ -57,15 +63,6 @@
   var renderCard = function (ad) {
     var fragment = document.createDocumentFragment();
     fragment.appendChild(window.card.makeCardElement(ad));
-    return fragment;
-  };
-
-  // Функция отрисовки меток объявлений
-  var renderPins = function (adsArray) {
-    var fragment = document.createDocumentFragment();
-    for (var i = 0; i < adsArray.length; i++) {
-      fragment.appendChild(window.pin.makePinElement(adsArray[i]));
-    }
 
     return fragment;
   };
@@ -129,22 +126,24 @@
 
   window.map = {
     disablePageState: function () {
+      var openedCard = map.querySelector('.map__card');
+
       map.classList.add('map--faded');
       adForm.classList.add('ad-form--disabled');
       adForm.reset();
 
       mapPinMain.style.left = PIN_MAIN_START_X + 'px';
       mapPinMain.style.top = PIN_MAIN_START_Y + 'px';
-      var pins = mapPinsContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
-      for (var i = 0; i < pins.length; i++) {
-        pins[i].remove();
-      }
-      var openedCard = map.querySelector('.map__card');
+      window.pin.removePins();
+
       if (openedCard) {
         openedCard.remove();
       }
-      window.form.changeAdFormFieldsState(DISABLE_FORM_FIELDS);
+
+      window.util.changeFormFieldsState(DISABLE_FORM_FIELDS, adForm);
+      window.util.changeFormFieldsState(DISABLE_FORM_FIELDS, mapFilters);
       window.form.setAddressFieldValue();
+      mapFilters.removeEventListener('change', window.filter.onFilterChange);
       typeField.removeEventListener('change', window.form.onTypeFieldChange);
       window.form.setPriceFieldValue();
       timeInField.removeEventListener('change', window.form.onTimeInFieldChange);
