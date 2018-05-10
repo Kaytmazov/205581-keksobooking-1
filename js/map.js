@@ -33,25 +33,25 @@
   var onLoad = function (data) {
     window.ads = data;
     var slicedAds = window.ads.slice(PINS_AMOUNT);
-    mapPinsContainer.append(window.pin.renderPins(slicedAds));
+    mapPinsContainer.append(window.pin.render(slicedAds));
   };
 
   // Функция переключения состояния страницы
   var enablePageState = function () {
-    window.backend.load(onLoad, window.error.onRequestError, LOAD_URL);
+    window.backend.load(onLoad, window.error, LOAD_URL);
     window.form.setAddressFieldValue('dragged');
 
     map.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
 
-    mapFilters.addEventListener('change', window.filter.onFilterChange);
+    mapFilters.addEventListener('change', window.filter.onFieldChange);
     typeField.addEventListener('change', window.form.onTypeFieldChange);
     timeInField.addEventListener('change', window.form.onTimeInFieldChange);
     timeOutField.addEventListener('change', window.form.onTimeOutFieldChange);
     roomNumberField.addEventListener('change', window.form.onRoomNumberFieldChange);
     resetButton.addEventListener('click', window.form.onResetButtonClick);
     submitButton.addEventListener('click', window.form.onSubmitButtonClick);
-    adForm.addEventListener('submit', window.form.onAdFormSubmit);
+    adForm.addEventListener('submit', window.form.onSubmit);
     window.util.changeFormFieldsState(ENABLE_FORM_FIELDS, adForm);
     window.util.changeFormFieldsState(ENABLE_FORM_FIELDS, mapFilters);
     pageState = 'enagled';
@@ -67,7 +67,7 @@
   // Функция отрисовки объявления
   var renderCard = function (ad) {
     var fragment = document.createDocumentFragment();
-    fragment.appendChild(window.card.makeCardElement(ad));
+    fragment.appendChild(window.card.makeElement(ad));
 
     return fragment;
   };
@@ -139,7 +139,7 @@
 
       mapPinMain.style.left = PIN_MAIN_START_X + 'px';
       mapPinMain.style.top = PIN_MAIN_START_Y + 'px';
-      window.pin.removePins();
+      window.pin.remove();
 
       if (openedCard) {
         openedCard.remove();
@@ -148,7 +148,7 @@
       window.util.changeFormFieldsState(DISABLE_FORM_FIELDS, adForm);
       window.util.changeFormFieldsState(DISABLE_FORM_FIELDS, mapFilters);
       window.form.setAddressFieldValue();
-      mapFilters.removeEventListener('change', window.filter.onFilterChange);
+      mapFilters.removeEventListener('change', window.filter.onFieldChange);
       typeField.removeEventListener('change', window.form.onTypeFieldChange);
       window.form.setPriceFieldValue();
       timeInField.removeEventListener('change', window.form.onTimeInFieldChange);
@@ -156,7 +156,7 @@
       roomNumberField.removeEventListener('change', window.form.onRoomNumberFieldChange);
       resetButton.removeEventListener('click', window.form.onResetButtonClick);
       submitButton.removeEventListener('click', window.form.onSubmitButtonClick);
-      adForm.removeEventListener('submit', window.form.onAdFormSubmit);
+      adForm.removeEventListener('submit', window.form.onSubmit);
       pageState = 'disabled';
     },
     openCard: function (ad) {

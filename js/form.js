@@ -67,9 +67,7 @@
       timeInField.options.selectedIndex = timeOutField.options.selectedIndex;
     },
     // Поля Количество комнат и мест
-    onRoomNumberFieldChange: function () {
-      updateCapacityField();
-    },
+    onRoomNumberFieldChange: updateCapacityField,
     // Поля Тип жилья и цена
     setPriceFieldValue: function () {
       var typeSelectedValue = typeField.options[typeField.selectedIndex].value;
@@ -90,8 +88,8 @@
         capacityField.setCustomValidity('');
       }
     },
-    onAdFormSubmit: function (evt) {
-      window.backend.save(new FormData(adForm), onSuccess, window.error.onRequestError, SAVE_URL);
+    onSubmit: function (evt) {
+      window.backend.save(new FormData(adForm), onSuccess, window.error, SAVE_URL);
       evt.preventDefault();
     }
   };

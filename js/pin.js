@@ -34,6 +34,14 @@
     return pinElement;
   };
 
+  // Функция удаления отрисованных меток
+  var removePins = function () {
+    var pins = mapPinsContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
+    pins.forEach(function (pin) {
+      pin.remove();
+    });
+  };
+
   window.pin = {
     // Функция вычисления координат главной метки
     calculateMainPinCoords: function (pinState) {
@@ -47,7 +55,7 @@
       return cordX + ', ' + cordY;
     },
     // Функция отрисовки меток объявлений
-    renderPins: function (ads) {
+    render: function (ads) {
       var fragment = document.createDocumentFragment();
 
       ads.forEach(function (it) {
@@ -56,12 +64,6 @@
 
       return fragment;
     },
-    // Функция удаления отрисованных меток
-    removePins: function () {
-      var pins = mapPinsContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
-      pins.forEach(function (pin) {
-        pin.remove();
-      });
-    }
+    remove: removePins
   };
 })();

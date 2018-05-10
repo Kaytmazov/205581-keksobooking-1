@@ -6,20 +6,17 @@
   var template = document.querySelector('template');
   var errorTemplate = template.content.querySelector('.error').cloneNode(true);
 
-  window.error = {
-    onRequestError: function (errorTitle, errorText) {
+  window.error = function (title, text) {
+    errorTemplate.querySelector('.error__title').textContent = title;
+    errorTemplate.querySelector('.error__text').textContent = text;
 
-      errorTemplate.querySelector('.error__title').textContent = errorTitle;
-      errorTemplate.querySelector('.error__text').textContent = errorText;
+    document.body.insertAdjacentElement('afterbegin', errorTemplate);
 
-      document.body.insertAdjacentElement('afterbegin', errorTemplate);
-
-      var errorAlert = document.querySelector('.error');
-      var removeErrorAlert = function () {
-        errorAlert.remove();
-      };
-      setTimeout(removeErrorAlert, ALERT_CLOSE_TIMER);
-    }
+    var alert = document.querySelector('.error');
+    var removeAlert = function () {
+      alert.remove();
+    };
+    setTimeout(removeAlert, ALERT_CLOSE_TIMER);
   };
 })();
 
