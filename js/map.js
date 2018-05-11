@@ -21,10 +21,12 @@
   var mapPinMain = document.querySelector('.map__pin--main');
   var mapFilters = document.querySelector('.map__filters');
   var adForm = document.querySelector('.ad-form');
+  var avatarField = adForm.querySelector('#avatar');
   var typeField = adForm.querySelector('#type');
   var timeInField = adForm.querySelector('#timein');
   var timeOutField = adForm.querySelector('#timeout');
   var roomNumberField = adForm.querySelector('#room_number');
+  var imagesField = adForm.querySelector('#images');
   var resetButton = adForm.querySelector('.ad-form__reset');
   var submitButton = adForm.querySelector('.ad-form__submit');
   var pageState = 'disabled';
@@ -45,10 +47,12 @@
     adForm.classList.remove('ad-form--disabled');
 
     mapFilters.addEventListener('change', window.filter.onFieldChange);
+    avatarField.addEventListener('change', window.form.onAvatarChange);
     typeField.addEventListener('change', window.form.onTypeFieldChange);
     timeInField.addEventListener('change', window.form.onTimeInFieldChange);
     timeOutField.addEventListener('change', window.form.onTimeOutFieldChange);
     roomNumberField.addEventListener('change', window.form.onRoomNumberFieldChange);
+    imagesField.addEventListener('change', window.form.onImagesFieldChange);
     resetButton.addEventListener('click', window.form.onResetButtonClick);
     submitButton.addEventListener('click', window.form.onSubmitButtonClick);
     adForm.addEventListener('submit', window.form.onSubmit);
@@ -149,11 +153,13 @@
       window.util.changeFormFieldsState(DISABLE_FORM_FIELDS, mapFilters);
       window.form.setAddressFieldValue();
       mapFilters.removeEventListener('change', window.filter.onFieldChange);
+      avatarField.removeEventListener('change', window.form.onAvatarChange);
       typeField.removeEventListener('change', window.form.onTypeFieldChange);
       window.form.setPriceFieldValue();
       timeInField.removeEventListener('change', window.form.onTimeInFieldChange);
       timeOutField.removeEventListener('change', window.form.onTimeOutFieldChange);
       roomNumberField.removeEventListener('change', window.form.onRoomNumberFieldChange);
+      imagesField.removeEventListener('change', window.form.onImagesFieldChange);
       resetButton.removeEventListener('click', window.form.onResetButtonClick);
       submitButton.removeEventListener('click', window.form.onSubmitButtonClick);
       adForm.removeEventListener('submit', window.form.onSubmit);
