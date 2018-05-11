@@ -27,6 +27,7 @@
   var timeOutField = adForm.querySelector('#timeout');
   var roomNumberField = adForm.querySelector('#room_number');
   var imagesField = adForm.querySelector('#images');
+  var photosContainer = adForm.querySelector('.ad-form__photo-container');
   var resetButton = adForm.querySelector('.ad-form__reset');
   var submitButton = adForm.querySelector('.ad-form__submit');
   var pageState = 'disabled';
@@ -53,6 +54,7 @@
     timeOutField.addEventListener('change', window.form.onTimeOutFieldChange);
     roomNumberField.addEventListener('change', window.form.onRoomNumberFieldChange);
     imagesField.addEventListener('change', window.form.onImagesFieldChange);
+    photosContainer.addEventListener('dragstart', window.form.onPhotoDragstart);
     resetButton.addEventListener('click', window.form.onResetButtonClick);
     submitButton.addEventListener('click', window.form.onSubmitButtonClick);
     adForm.addEventListener('submit', window.form.onSubmit);
@@ -160,6 +162,7 @@
       timeOutField.removeEventListener('change', window.form.onTimeOutFieldChange);
       roomNumberField.removeEventListener('change', window.form.onRoomNumberFieldChange);
       imagesField.removeEventListener('change', window.form.onImagesFieldChange);
+      photosContainer.removeEventListener('dragstart', window.form.onPhotoDragstart);
       resetButton.removeEventListener('click', window.form.onResetButtonClick);
       submitButton.removeEventListener('click', window.form.onSubmitButtonClick);
       adForm.removeEventListener('submit', window.form.onSubmit);
