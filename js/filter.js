@@ -20,13 +20,13 @@
     if (map.querySelector('.map__card')) {
       window.map.closeCard();
     }
-    window.pin.removePins();
+    window.pin.remove();
 
     var filteredPins = window.ads.filter(function (it) {
       return getType(it) && getPrice(it) && getRooms(it) && getCapacity(it) && getFeatures(it);
     }).slice(PINS_AMOUNT);
 
-    mapPinsContainer.append(window.pin.renderPins(filteredPins));
+    mapPinsContainer.append(window.pin.render(filteredPins));
   };
 
   var getType = function (ad) {
@@ -72,7 +72,7 @@
   };
 
   window.filter = {
-    onFilterChange: function () {
+    onFieldChange: function () {
       window.debounce(updatePins);
     }
   };
