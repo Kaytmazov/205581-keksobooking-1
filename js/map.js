@@ -6,8 +6,8 @@
   var PIN_MAIN_START_X = 570;
   var PIN_MAIN_START_Y = 375;
   var PIN_ARROW_HEIGHT = 22;
-  var LOCATION_X_MIN = 300;
-  var LOCATION_X_MAX = 900;
+  var LOCATION_X_MIN = 0;
+  var LOCATION_X_MAX = 1200;
   var LOCATION_Y_MIN = 150;
   var LOCATION_Y_MAX = 500;
   var ESC_KEYCODE = 27;
